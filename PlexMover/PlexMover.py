@@ -5,15 +5,16 @@ from __future__ import print_function
 import click
 import platform
 
-os_name = platform.system()
-
 
 @click.group()
 @click.pass_context
 def cli(ctx):
+    os_name = platform.system()
     if os_name == 'Darwin':
         from PlexMover.oslibs.darwin import Darwin
         ctx.obj = Darwin()
+    elif os_name == 'Windows':
+        import PlexMover.oslibs.windows
     else:
         ctx.fail('%s is not supported' % os_name)
 
