@@ -21,6 +21,9 @@ def cli(ctx):
     elif os_name == 'Windows':
         from PlexMover.oslibs.windows import Windows
         ctx.obj = Windows
+    elif os_name == 'Linux':
+        from PlexMover.oslibs.linux import Linux
+        ctx.obj = Linux
     else:
         ctx.fail('%s is not supported' % os_name)
 
