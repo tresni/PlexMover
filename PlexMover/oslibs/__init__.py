@@ -1,15 +1,15 @@
-from abc import ABCMeta, abstractmethod
+import abc
 
 
-class SettingsHandler(metaclass=ABCMeta):
-    @abstractmethod
-    def importSettings(self, target):
+class SettingsHandler(metaclass=abc.ABCMeta):
+    @abc.abstractclassmethod
+    def importSettings(self, settings):
         raise NotImplementedError()
 
-    @abstractmethod
-    def exportSettings(self, target):
+    @abc.abstractclassmethod
+    def exportSettings(self):
         raise NotImplementedError()
 
-    @abstractmethod
-    def getDataPath(self):
+    @abc.abstractstaticmethod
+    def getDataPath():
         raise NotImplementedError()

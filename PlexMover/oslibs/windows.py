@@ -5,15 +5,21 @@ from PlexMover.oslibs import SettingsHandler
 
 
 class Windows(SettingsHandler):
-    def importSettings(self, target):
+    @staticmethod
+    def OpenKey():
+        return winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                              'Software\\Plex, Inc.\\Plex Media Server',
+                              access=winreg.KEY_ALL_ACCESS)
+
+    @classmethod
+    def importSettings(cls, settings):
         pass
 
-    def exportSettings(self, target):
+    @classmethod
+    def exportSettings(cls):
         settings = {}
         try:
-            with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                                'Software\\Plex, Inc.\\Plex Media Server',
-                                access=winreg.KEY_ALL_ACCESS) as reg:
+            with cls.OpenKey() as reg:
                 for index in range(winreg.QueryInfoKey(reg)[1]):
                     key, value, type = winreg.EnumValue(reg, index)
                     settings[key] = value
@@ -21,5 +27,6 @@ class Windows(SettingsHandler):
         except OSError:
             return None
 
-    def getDataPath(self):
+    @staticmethod
+    def getDataPath():
         return os.path.expandvars('%LOCALAPPDATA%\\Plex Media Server')
