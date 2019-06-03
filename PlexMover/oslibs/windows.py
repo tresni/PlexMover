@@ -13,7 +13,18 @@ class Windows(SettingsHandler):
 
     @classmethod
     def importSettings(cls, settings):
-        pass
+        with cls.OpenKey() as reg:
+            for k, v in settings.items():
+                if isinstance(v, str):
+                    type = winreg.REG_SZ
+                    value = str(v)
+                elif isinstance(v, (int, bool, float)):
+                    type = winreg.REG_DWORD
+                    value = int(v)
+                else:
+                    raise Exception('Unable to determine type for setting '
+                                    '"%s"' % k)
+                winreg.SetValueEx(reg, k, 0, type, value)
 
     @classmethod
     def exportSettings(cls):
