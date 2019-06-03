@@ -15,11 +15,8 @@ SETTINGS_FILE = 'PlexMover.settings.json'
 
 
 @click.group()
-@click.option('-s', '--server', default='localhost')
-@click.option('-p', '--port', type=int, default=32400)
-@click.option('-e', '--secure/--no-secure', default=False)
 @click.pass_context
-def cli(ctx, server, port, secure):
+def cli(ctx):
     os_name = platform.system()
     if os_name == 'Darwin':
         from PlexMover.oslibs.darwin import Darwin
@@ -29,22 +26,6 @@ def cli(ctx, server, port, secure):
         ctx.obj = Windows
     else:
         ctx.fail('%s is not supported' % os_name)
-
-    url = '%s://%s:%s/:/prefs' % ('https' if secure else 'http', server, port)
-    with requests.get(url) as resp:
-        tree = ET.fromstring(resp.text)
-
-    trash = tree.find('.//Setting[@id=\'autoEmptyTrash\']')
-    if trash.attrib['value'] == '0':
-        click.echo('"Empty trash automatically after every scan" is disabled')
-    else:
-        click.echo('Disabling "Empty trash automatically after every scan"')
-        resp = requests.put("%s?autoEmptyTrash=0" % url)
-        if resp.status_code != 200:
-            ctx.fail('Unable to disable '
-                     '"Empty trash automatically after every scan"\n'
-                     'Please do that through the server settings before '
-                     'proceeding.')
 
 
 @cli.command('import')
@@ -80,8 +61,27 @@ def _is_zip(ctx, param, value):
                 callback=_is_zip)
 @click.option('-d', '--data-dir', 'datadir',
               type=click.Path(exists=True, file_okay=False))
+@click.option('-s', '--server', default='localhost')
+@click.option('-p', '--port', type=int, default=32400)
+@click.option('-e', '--secure/--no-secure', default=False)
 @click.pass_context
-def exportSettings(ctx, file, datadir):
+def exportSettings(ctx, file, datadir, secure, port, server):
+    url = '%s://%s:%s/:/prefs' % ('https' if secure else 'http', server, port)
+    with requests.get(url) as resp:
+        tree = ET.fromstring(resp.text)
+
+    trash = tree.find('.//Setting[@id=\'autoEmptyTrash\']')
+    if trash.attrib['value'] == '0':
+        click.echo('"Empty trash automatically after every scan" is disabled')
+    else:
+        click.echo('Disabling "Empty trash automatically after every scan"')
+        resp = requests.put("%s?autoEmptyTrash=0" % url)
+        if resp.status_code != 200:
+            ctx.fail('Unable to disable '
+                     '"Empty trash automatically after every scan"\n'
+                     'Please do that through the server settings before '
+                     'proceeding.')
+
     if os.path.exists(file):
         if not click.confirm('We will remove "%s", do you want to continue?'
                              % file):
