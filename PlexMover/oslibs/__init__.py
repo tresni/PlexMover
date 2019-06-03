@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
+
 class SettingsHandler(metaclass=ABCMeta):
     @abstractmethod
     def importSettings(self, target):
@@ -7,4 +8,8 @@ class SettingsHandler(metaclass=ABCMeta):
 
     @abstractmethod
     def exportSettings(self, target):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def getDataPath(self):
         raise NotImplementedError()

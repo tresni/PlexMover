@@ -1,6 +1,8 @@
+import os.path
 import winreg
 
 from PlexMover.oslibs import SettingsHandler
+
 
 class Windows(SettingsHandler):
     def importSettings(self, target):
@@ -18,3 +20,6 @@ class Windows(SettingsHandler):
                 return settings
         except OSError:
             return None
+
+    def getDataPath(self):
+        return os.path.expandvars('%LOCALAPPDATA%\\Plex Media Server')
