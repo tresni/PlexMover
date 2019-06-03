@@ -14,7 +14,8 @@ def cli(ctx):
         from PlexMover.oslibs.darwin import Darwin
         ctx.obj = Darwin()
     elif os_name == 'Windows':
-        import PlexMover.oslibs.windows
+        from PlexMover.oslibs.windows import Windows
+        ctx.obj = Windows()
     else:
         ctx.fail('%s is not supported' % os_name)
 

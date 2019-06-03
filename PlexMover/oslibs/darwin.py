@@ -2,8 +2,10 @@ from __future__ import print_function
 import os
 import plistlib
 
+from PlexMover.oslibs import SettingsHandler
 
-class Darwin(object):
+
+class Darwin(SettingsHandler):
     def importSettings(self, target):
         pass
 
