@@ -40,4 +40,13 @@ class Windows(SettingsHandler):
 
     @staticmethod
     def getDataPath():
+        # this can be in the registry too... Need to check that...
+        # LocalAppDataPath is the Value
+        try:
+            with Windows.OpenKey() as reg:
+                value, _ = winreg.QueryValueEx(reg, 'LocalAppDataPath')
+                if value:
+                    return value
+        except OSError:
+            pass
         return os.path.expandvars('%LOCALAPPDATA%\\Plex Media Server')
